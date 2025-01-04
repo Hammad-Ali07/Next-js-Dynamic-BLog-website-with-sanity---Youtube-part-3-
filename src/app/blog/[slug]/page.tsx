@@ -1,15 +1,25 @@
+import { client } from "@/sanity/lib/client";
+import { ulForr } from "@/sanity/lib/image";
+import { PortableText } from "next-sanity";
 import Image from "next/image";
-export default function page() {
+export default async function page({params:{slug}}:{params:{slug:string}}) {
+
+  const query = `*[_type == 'blog' && slug.current == "${slug}"]{
+  Title , Paragraph , image , block 
+}[0]`;
+
+    const data = await client.fetch(query)
+
+
   return (
     <article className="mt-12 mb-24 px-2 2xl:px-12 flex flex-col gap-y-8">
       {/* Blog Title */}
       <h1 className="text-xl xs:text-3xl lg:text-5xl font-bold text-dark dark:text-light">
-      HAPPY NEW YEAR! New Years Eve: Regular Hours | New Years Day: 11AM-7PM (Sales Only)
-
+       {data.Title}
 </h1>
       {/* Featured Image */}
       <Image
-        src={"/car.png"}
+        src={ulForr(data.image).url()}
         width={500}
         height={500}
         alt="AI for everyone"
@@ -21,10 +31,7 @@ export default function page() {
         Summary
       </h2>
       <p className="text-base md:text-xl leading-relaxed text-justify text-dark/80 dark:text-light/80">
-      I am starting a new Nextjs courses series  In this vedio of Nextjs Tutorial for Beginners 
-       I am first giving you nexjs introduction and then I am guiding you about the installation 
-       of nextjs step by step so after watching this vedio you are now about what is nextjs  why
-        use nextjs  and important features of nextjs Also stayed tuned for next vedio of this series
+      {data.Paragraph}
       </p>
       </section>
       {/* Author Section (Image & Bio) */}
@@ -36,24 +43,14 @@ export default function page() {
           alt="author"
           className="object-cover rounded-full h-12 w-12 sm:h-24 sm:w-24"
         />
-        <div className="flex flex-col gap-1">
-          <h3 className="text-xl font-bold text-dark dark:text-light">EmAar</h3>
-          <p className="italic text-xs xs:text-sm sm:text-base text-dark/80 dark:text-light/80">
-          Experienced Web Developer | Expert in WordPress Nextjs Reactjs Nodejs Typescript JavaScript 
-          GitHub Sanity Tailwind CSS | Participant in PIAIC and GIAIC
-          </p>
-        </div>
+        
       </section>
 
       {/* Main Body of Blog */}
-      <p className="text-lg leading-normal text-dark/80 dark:text-light/80">
-         Master Nextjs with our comprehensive full course playlist! This stepbystep series covers 
-      everything you need to build dynamic and highperformance web applications From the basics
-       of installation and setup to advanced features like serverside rendering API integration 
-       and deployment—this course has it all! Perfect for beginners and experienced developers 
-       looking to enhance their skills Start learning today and take your web development 
-       to the next level!
-      </p>
+      <section className="text-lg leading-normal text-dark/80 dark:text-light/80">
+        <PortableText value={data.block} />
+      </section>
+
     </article>
   );
 }
