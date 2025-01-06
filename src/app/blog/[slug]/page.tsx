@@ -1,3 +1,4 @@
+import CommentBox from "@/app/componets/comment";
 import { client } from "@/sanity/lib/client";
 import { ulForr } from "@/sanity/lib/image";
 import { PortableText } from "next-sanity";
@@ -49,7 +50,9 @@ export default async function page({params:{slug}}:{params:{slug:string}}) {
       {/* Main Body of Blog */}
       <section className="text-lg leading-normal text-dark/80 dark:text-light/80">
         <PortableText value={data.block} />
+        <CommentBox />
       </section>
+      
 
     </article>
   );
