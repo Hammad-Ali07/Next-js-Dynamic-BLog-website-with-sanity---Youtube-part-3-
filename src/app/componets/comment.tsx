@@ -1,56 +1,59 @@
-// components/CommentSection.tsx
 'use client'
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 
-const CommentSection: React.FC = () => {
-  const [comments, setComments] = useState<string[]>([]); // Store comments
-  const [newComment, setNewComment] = useState<string>(""); // Store the new comment
+const CommentBox = () => {
+  const [comment, setComment] = useState('');
+  const [comments, setComments] = useState<string[]>([]);
 
-  // Load comments from localStorage when the component mounts
+  // Load comments from localStorage on initial render
   useEffect(() => {
-    const storedComments = JSON.parse(localStorage.getItem("comments") || "[]");
-    setComments(storedComments);
+    const storedComments = localStorage.getItem('comments');
+    if (storedComments) {
+      setComments(JSON.parse(storedComments));
+    }
   }, []);
 
-  // Save comments to localStorage whenever the comments state changes
-  useEffect(() => {
-    localStorage.setItem("comments", JSON.stringify(comments));
-  }, [comments]);
-
-  const handleAddComment = () => {
-    if (newComment.trim()) {
-      setComments((prevComments) => [...prevComments, newComment.trim()]);
-      setNewComment("");
+  // Function to add a new comment
+  const addComments = () => {
+    if (comment.trim() !== '') {
+      const updatedComments = [...comments, comment];
+      setComments(updatedComments);
+      setComment('');
+      localStorage.setItem('comments', JSON.stringify(updatedComments)); // Save to localStorage
     }
   };
 
   return (
-    <div className="comment-section p-4 border rounded-lg">
-      <h3 className="text-lg font-semibold mb-4">Comments</h3>
-      <textarea
-        value={newComment}
-        onChange={(e) => setNewComment(e.target.value)}
-        placeholder="Write a comment..."
-        className="w-full p-2 border rounded-md mb-2"
+    <div>
+      <h1 className="text-3x1 font-bold mt-4 text-purple-500">Comment Box</h1>
+      <input
+        type="text"
+        value={comment}
+        onChange={(e) => setComment(e.target.value)}
+        placeholder="Write your comment"
+        className="border border-purple-500 mt-3 w-80 p-2"
       />
+      <br />
       <button
-        onClick={handleAddComment}
-        className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+        className="bg-purple-400 text-white w-36 mt-3"
+        onClick={addComments}
       >
         Add Comment
       </button>
-      <ul className="comment-list mt-4">
-        {comments.map((comment, index) => (
-          <li
-            key={index}
-            className="bg-gray-100 p-2 rounded-md shadow-sm mb-2"
-          >
-            {comment}
-          </li>
-        ))}
-      </ul>
+      <div className="mt-2">
+        <h2>All Comments:</h2>
+        {comments.length === 0 ? (
+          <p>No comments yet. Add your comment!</p>
+        ) : (
+          <ul>
+            {comments.map((data, index) => (
+              <li key={index}>{data}</li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 };
 
-export default CommentSection;
+export default CommentBox;
